@@ -7,6 +7,7 @@ export function middleware(req: NextRequest) {
 
   const publicPaths = ["/auth/login", "/auth/register"];
   if (publicPaths.includes(pathname) && jwt) {
+    console.log("redirecting to dashboard");
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
@@ -20,5 +21,11 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/billing/:path*", "/reports/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/billing/:path*",
+    "/reports/:path*",
+    "/auth/login",
+    "/auth/register",
+  ],
 };

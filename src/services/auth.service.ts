@@ -123,7 +123,7 @@ export const register = async (
 export const logout = async (): Promise<AuthResponse> => {
   try {
     await signOut(auth);
-    const response = await fetch("/api/auth/deleteCookie", {
+    const response = await fetch("/api/auth/revokeCookies", {
       method: "POST",
     });
     if (!response.ok) {

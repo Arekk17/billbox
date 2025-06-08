@@ -7,7 +7,20 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
   .object({
-    email: z.string().email("Nieprawidłowy adres email"),
+    email: z
+      .string()
+      .min(1, "Pole jest wymagane")
+      .email("Nieprawidłowy adres email")
+      .trim()
+      .toLowerCase(),
+    firstName: z
+      .string({ required_error: "Pole jest wymagane" })
+      .min(1, "Pole jest wymagane")
+      .trim(),
+    lastName: z
+      .string({ required_error: "Pole jest wymagane" })
+      .min(1, "Pole jest wymagane")
+      .trim(),
     password: z.string().min(6, "Hasło musi mieć co najmniej 6 znaków"),
     confirmPassword: z.string().min(6, "Hasło musi mieć co najmniej 6 znaków"),
   })

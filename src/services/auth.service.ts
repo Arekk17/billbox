@@ -1,48 +1,169 @@
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  sendPasswordResetEmail,
   signOut,
-  UserCredential,
+  User,
 } from "firebase/auth";
-import { auth } from "@/lib/firebase/firebase";
 import {
-  LoginFormData,
-  RegisterFormData,
-  ForgotPasswordFormData,
+  loginSchema,
+  registerSchema,
+  type LoginFormData,
+  type RegisterFormData,
 } from "@/lib/validations/auth";
-
+import { auth } from "@/lib/firebase/firebase";
+import { createUser } from "./user.service";
 export interface AuthResponse {
-  user: {
-    id: string;
-    email: string | null;
-    name: string | null;
-  };
+  success: boolean;
+  error?: string;
+  user?: User;
 }
 
-export const authService = {
-  async login(data: LoginFormData): Promise<AuthResponse> {
-    // TODO: Zaimplementuj logowanie przez Firebase
-    throw new Error("Not implemented");
-  },
+export const login = async (data: LoginFormData): Promise<AuthResponse> => {
+  try {
+    const validateFields = loginSchema.safeParse(data);
+    if (!validateFields.success) {
+      return {
+        success: false,
+        error: validateFields.error.message,
+      };
+    }
 
-  async register(data: RegisterFormData): Promise<AuthResponse> {
-    // TODO: Zaimplementuj rejestrację przez Firebase
-    throw new Error("Not implemented");
-  },
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      const idToken = await userCredential.user.getIdToken();
 
-  async forgotPassword(data: ForgotPasswordFormData): Promise<void> {
-    // TODO: Zaimplementuj resetowanie hasła przez Firebase
-    throw new Error("Not implemented");
-  },
+      const response = await fetch("/api/auth/createCookie", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: idToken,
+        }),
+      });
 
-  async logout(): Promise<void> {
-    // TODO: Zaimplementuj wylogowanie przez Firebase
-    throw new Error("Not implemented");
-  },
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create cookie");
+      }
 
-  async getCurrentUser(): Promise<AuthResponse | null> {
-    // TODO: Zaimplementuj pobieranie aktualnego użytkownika
-    throw new Error("Not implemented");
-  },
+      return {
+        success: true,
+        user: userCredential.user,
+      };
+    } catch (error) {
+      console.error("Firebase auth error:", error);
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Wystąpił błąd podczas logowania",
+      };
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Wystąpił błąd",
+    };
+  }
 };
+export const register = async (
+  data: RegisterFormData
+): Promise<AuthResponse> => {
+  try {
+    const validateFields = registerSchema.safeParse(data);
+    if (!validateFields.success) {
+      return {
+        success: false,
+        error: validateFields.error.message,
+      };
+    }
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      data.email,
+      data.password
+    );
+    await createUser(userCredential.user.uid, {
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+    });
+    const idToken = await userCredential.user.getIdToken();
+
+    const response = await fetch("/api/auth/createCookie", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: idToken,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to create cookie");
+    }
+    return {
+      success: true,
+      user: userCredential.user,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Wystąpił błąd",
+    };
+  }
+};
+export const logout = async (): Promise<AuthResponse> => {
+  try {
+    await signOut(auth);
+    const response = await fetch("/api/auth/deleteCookie", {
+      method: "POST",
+    });
+    if (!response.ok) {
+      throw new Error("Failed to delete cookie");
+    }
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error("Logout error:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Wystąpił błąd",
+    };
+  }
+};
+
+export const isAuthenticated = (): boolean => {
+  return !!auth.currentUser;
+};
+
+export const getCurrentUser = (): User | null => {
+  return auth.currentUser;
+};
+
+// TODO: Implement refresh token
+
+// export const refreshToken = async (): Promise<AuthResponse> => {
+//   try {
+//     const user = auth.currentUser;
+//     if (!user) {
+//       return { success: false, error: "No authenticated user found" };
+//     }
+
+//     return { success: true, user: user };
+//   } catch (error) {
+//     console.error("Token refresh error:", error);
+//     return {
+//       success: false,
+//       error: error instanceof Error ? error.message : "Wystąpił błąd",
+//     };
+//   }
+// };

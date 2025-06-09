@@ -1,15 +1,10 @@
 import { Button } from "@/components/atoms/Buttons/Button";
-import { FormField } from "@/components/molecules/FormField/FormField";
+import { Input } from "@/components/atoms/Fields/Input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterFormData } from "@/lib/validations/auth";
 import { useState } from "react";
-
-interface RegisterFormProps {
-  onSubmit: (data: RegisterFormData) => Promise<void>;
-  loading?: boolean;
-}
-
+import { RegisterFormProps } from "@/lib/types/form";
 export const RegisterForm = ({ onSubmit, loading }: RegisterFormProps) => {
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -43,50 +38,50 @@ export const RegisterForm = ({ onSubmit, loading }: RegisterFormProps) => {
         </div>
       )}
 
-      <FormField<RegisterFormData>
+      <Input<RegisterFormData>
         name="email"
-        label="Email"
         type="email"
+        label="Email"
         placeholder="Wprowadź swój email"
         register={register}
         errors={errors}
         required
       />
 
-      <FormField<RegisterFormData>
+      <Input<RegisterFormData>
         name="firstName"
-        label="Imię"
         type="text"
+        label="Imię"
         placeholder="Wprowadź swoje imię"
         register={register}
         errors={errors}
         required
       />
 
-      <FormField<RegisterFormData>
+      <Input<RegisterFormData>
         name="lastName"
-        label="Nazwisko"
         type="text"
+        label="Nazwisko"
         placeholder="Wprowadź swoje nazwisko"
         register={register}
         errors={errors}
         required
       />
 
-      <FormField<RegisterFormData>
+      <Input<RegisterFormData>
         name="password"
-        label="Hasło"
         type="password"
+        label="Hasło"
         placeholder="Wprowadź hasło"
         register={register}
         errors={errors}
         required
       />
 
-      <FormField<RegisterFormData>
+      <Input<RegisterFormData>
         name="confirmPassword"
-        label="Potwierdź hasło"
         type="password"
+        label="Potwierdź hasło"
         placeholder="Potwierdź hasło"
         register={register}
         errors={errors}

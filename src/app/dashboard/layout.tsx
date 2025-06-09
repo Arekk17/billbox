@@ -1,9 +1,10 @@
 import { getUserFromCookie } from "@/lib/auth/getUserFromCookie";
-import { QueryProvider } from "@/providers/QueryProvider";
-import { getUserById } from "@/services/user.service";
+import { QueryProvider } from "@/lib/providers/QueryProvider";
+import { getUserById } from "@/lib/services/user.service";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
 import "../globals.css";
+import Header from "@/components/molecules/Nav/Header";
 export default async function DashboardLayout({
   children,
 }: {
@@ -25,6 +26,7 @@ export default async function DashboardLayout({
   return (
     <QueryProvider dehydratedState={dehydratedState}>
       <div className="dashboard-layout bg-base-100">
+        <Header />
         <main>{children}</main>
       </div>
     </QueryProvider>

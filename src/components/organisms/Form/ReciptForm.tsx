@@ -7,12 +7,15 @@ import { Select } from "@/components/atoms/Fields/Select";
 import { FileInput } from "@/components/atoms/Fields/FileInput";
 import { Button } from "@/components/atoms/Buttons/Button";
 import { ReceiptFormProps } from "@/lib/types/recips";
+import { toast } from "react-toastify";
+import { addReceipt } from "@/lib/services/recipts.service";
 
-const ReceiptForm = ({ onSubmit, loading, categories }: ReceiptFormProps) => {
+const ReceiptForm = ({ loading, categories, userId }: ReceiptFormProps) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<ReceiptFormData>({
     resolver: zodResolver(receiptSchema),
     mode: "onSubmit",
@@ -21,8 +24,29 @@ const ReceiptForm = ({ onSubmit, loading, categories }: ReceiptFormProps) => {
     },
   });
 
+  console.log("Form errors:", errors);
+
+  const handleReceiptSubmit = async (data: ReceiptFormData) => {
+    console.log("handleReceiptSubmit called", data);
+    try {
+      const result = await addReceipt(data, userId);
+      if (result.success) {
+        reset();
+        toast.success("Paragon dodany pomyślnie");
+      } else {
+        toast.error(result.error || "Wystąpił błąd podczas dodawania paragonu");
+      }
+    } catch (error) {
+      console.error("Error creating receipt: ", error);
+      toast.error("Wystąpił błąd podczas dodawania paragonu");
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4">
+    <form
+      onSubmit={handleSubmit(handleReceiptSubmit)}
+      className="grid grid-cols-2 gap-4"
+    >
       <Input<ReceiptFormData>
         name="title"
         type="text"

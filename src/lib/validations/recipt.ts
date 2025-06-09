@@ -2,7 +2,7 @@ import { z } from "zod";
 import { validateFileSize, validateFileType } from "@/constants/file";
 
 export const receiptSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
 
   title: z
     .string()
@@ -11,10 +11,10 @@ export const receiptSchema = z.object({
 
   description: z.string().max(500, "Opis jest za długi").optional(),
 
-  date: z.date({
-    required_error: "Data jest wymagana",
-    invalid_type_error: "Nieprawidłowy format daty",
-  }),
+  // date: z.date({
+  //   required_error: "Data jest wymagana",
+  //   invalid_type_error: "Nieprawidłowy format daty",
+  // }),
 
   amount: z
     .number({

@@ -60,7 +60,8 @@ export const getReceiptById = async (id: string) => {
 };
 
 export const addReceipt = async (
-  receipt: ReceiptFormData
+  receipt: ReceiptFormData,
+  userId: string
 ): Promise<{
   success: boolean;
   data?: ReceiptFormData;
@@ -75,11 +76,11 @@ export const addReceipt = async (
       const snapshot = await uploadBytes(storageRef, file);
       imageUrl = await getDownloadURL(snapshot.ref);
     }
-    const today = new Date().toISOString().split("T")[0];
+
     const receiptData = {
       ...receipt,
-      date: new Date(today),
       image: imageUrl,
+      userId: userId,
     };
 
     const receiptsRef = collection(db, "receipts");

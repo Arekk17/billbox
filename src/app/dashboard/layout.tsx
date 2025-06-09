@@ -5,6 +5,7 @@ import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
 import "../globals.css";
 import Header from "@/components/molecules/Nav/Header";
+import { Toast } from "@/components/atoms/Toast/Toast";
 export default async function DashboardLayout({
   children,
 }: {
@@ -28,6 +29,7 @@ export default async function DashboardLayout({
       <div className="dashboard-layout bg-base-100">
         <Header />
         <main>{children}</main>
+        <Toast />
       </div>
     </QueryProvider>
   );

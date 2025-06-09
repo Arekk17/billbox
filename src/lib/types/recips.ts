@@ -20,8 +20,8 @@ export interface FileInputProps<T extends Record<string, unknown>> {
   };
 }
 export interface ReceiptFormProps {
-  onSubmit: (data: ReceiptFormData) => Promise<void>;
   loading?: boolean;
   defaultValues?: Partial<ReceiptFormData>;
   categories: Category[];
+  userId: string;
 }

@@ -25,10 +25,12 @@ export const FileInput = <T extends Record<string, unknown>>({
   return (
     <div className="form-control w-full">
       <fieldset className={cn("fieldset", className)}>
-        <legend className="fieldset-legend font-medium">
-          {label}
-          {required && <span className="text-error ml-1">*</span>}
-        </legend>
+        <label className="label">
+          <span className="label-text font-medium">
+            {label}
+            {required && <span className="text-error ml-1">*</span>}
+          </span>
+        </label>
         <input
           type="file"
           className={cn(

@@ -9,6 +9,8 @@ import { Button } from "@/components/atoms/Buttons/Button";
 import { ReceiptFormProps } from "@/lib/types/recips";
 import { toast } from "react-toastify";
 import { addReceipt } from "@/lib/services/recipts.service";
+import { DateInput } from "@/components/atoms/Fields/DateInput";
+import { Textarea } from "@/components/atoms/Fields/Textarea";
 
 const ReceiptForm = ({ loading, categories, userId }: ReceiptFormProps) => {
   const {
@@ -45,49 +47,61 @@ const ReceiptForm = ({ loading, categories, userId }: ReceiptFormProps) => {
   return (
     <form
       onSubmit={handleSubmit(handleReceiptSubmit)}
-      className="grid grid-cols-2 gap-4"
+      className="grid grid-cols-1 gap-4"
     >
-      <Input<ReceiptFormData>
-        name="title"
-        type="text"
-        label="Tytuł"
-        placeholder="Wprowadź tytuł paragonu"
-        register={register}
-        errors={errors}
-        required
-      />
-      <Input<ReceiptFormData>
+      <div className="grid grid-cols-2 gap-4">
+        <Input<ReceiptFormData>
+          name="title"
+          type="text"
+          label="Tytuł"
+          placeholder="Wprowadź tytuł paragonu"
+          register={register}
+          errors={errors}
+          required
+        />
+        <DateInput<ReceiptFormData>
+          name="date"
+          label="Data paragonu"
+          register={register}
+          errors={errors}
+          required
+        />
+        <Select<ReceiptFormData>
+          name="categoryId"
+          label="Kategoria"
+          placeholder="Wybierz kategorię"
+          register={register}
+          errors={errors}
+          required
+          options={categories.map((category) => ({
+            value: category.id,
+            label: category.name,
+          }))}
+        />
+        <Input<ReceiptFormData>
+          name="amount"
+          type="number"
+          label="Kwota"
+          placeholder="Kwota paragonu zł"
+          register={register}
+          errors={errors}
+          required
+          step="0.01"
+          min="0.01"
+        />
+      </div>
+
+      <Textarea<ReceiptFormData>
         name="description"
-        type="text"
-        label="Opis"
-        placeholder="Wprowadź opis paragonu"
+        label="Opis paragonu"
+        placeholder="Wprowadź opis paragonu..."
         register={register}
         errors={errors}
-      />
-      <Input<ReceiptFormData>
-        name="amount"
-        type="number"
-        label="Kwota"
-        placeholder="Kwota paragonu zł"
-        register={register}
-        errors={errors}
-        required
-        step="0.01"
-        min="0.01"
+        rows={4}
+        maxLength={500}
+        minLength={10}
       />
 
-      <Select<ReceiptFormData>
-        name="categoryId"
-        label="Kategoria"
-        placeholder="Wybierz kategorię"
-        register={register}
-        errors={errors}
-        required
-        options={categories.map((category) => ({
-          value: category.id,
-          label: category.name,
-        }))}
-      />
       <FileInput<ReceiptFormData>
         name="image"
         label="Dodaj obraz"
@@ -95,7 +109,8 @@ const ReceiptForm = ({ loading, categories, userId }: ReceiptFormProps) => {
         errors={errors}
         maxSize={2}
       />
-      <div className="col-span-2">
+
+      <div>
         <Button type="submit" className="w-full" loading={loading}>
           Dodaj paragon
         </Button>

@@ -11,10 +11,7 @@ export const receiptSchema = z.object({
 
   description: z.string().max(500, "Opis jest za długi").optional(),
 
-  // date: z.date({
-  //   required_error: "Data jest wymagana",
-  //   invalid_type_error: "Nieprawidłowy format daty",
-  // }),
+  date: z.string().min(1, "Data jest wymagana"),
 
   amount: z
     .number({

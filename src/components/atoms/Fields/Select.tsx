@@ -43,7 +43,7 @@ export const Select = <T extends Record<string, unknown>>({
         <label className="label">
           <span className="label-text font-medium">
             {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
+            {required && <span className="text-error ml-1">*</span>}
           </span>
         </label>
       )}

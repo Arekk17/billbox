@@ -171,7 +171,7 @@ npm run start   # Start production server
 npm run lint    # Run ESLint
 ```
 
-## 📱 Mobile App
+## 📱 Web App
 
 [APK link will be added after mobile app development]
 

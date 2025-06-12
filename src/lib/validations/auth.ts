@@ -2,7 +2,11 @@ import { z } from "zod";
 
 export const loginSchema = z.object({
   email: z.string().email("Nieprawidłowy adres email"),
-  password: z.string().min(6, "Hasło musi mieć co najmniej 6 znaków"),
+  password: z.string().refine((val) => {
+    // Jeśli hasło jest puste, pomijamy walidację (dla logowania przez Google)
+    if (val === "") return true;
+    return val.length >= 6;
+  }, "Hasło musi mieć co najmniej 6 znaków"),
 });
 
 export const registerSchema = z

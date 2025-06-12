@@ -4,8 +4,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, loginSchema } from "@/lib/validations/auth";
 import { LoginFormProps } from "@/lib/types/form";
+import { loginWithGoogle } from "@/lib/services/auth.service";
+import { FaGoogle } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export const LoginForm = ({ onSubmit, loading }: LoginFormProps) => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -14,6 +19,22 @@ export const LoginForm = ({ onSubmit, loading }: LoginFormProps) => {
     resolver: zodResolver(loginSchema),
     mode: "onBlur",
   });
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await loginWithGoogle();
+      if (result.success && result.user) {
+        router.push("/dashboard");
+      } else {
+        console.error(
+          "Wystąpił błąd podczas logowania przez Google:",
+          result.error
+        );
+      }
+    } catch (error) {
+      console.error("Błąd podczas logowania przez Google:", error);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -47,8 +68,22 @@ export const LoginForm = ({ onSubmit, loading }: LoginFormProps) => {
           },
         }}
       />
+      <div className="mt-4">
+        <Link
+          href="/auth/forgot-password"
+          className="link link-primary text-sm"
+        >
+          Zapomniałeś hasła?
+        </Link>
+      </div>
       <Button type="submit" className="w-full" loading={loading}>
         Zaloguj się
+      </Button>
+      <Button type="button" className="w-full" onClick={handleGoogleLogin}>
+        <span className="flex items-center gap-2">
+          <FaGoogle />
+          Zaloguj się przez Google
+        </span>
       </Button>
     </form>
   );

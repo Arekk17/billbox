@@ -5,9 +5,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterFormData } from "@/lib/validations/auth";
 import { useState } from "react";
 import { RegisterFormProps } from "@/lib/types/form";
+import { FaGoogle } from "react-icons/fa";
+import { loginWithGoogle } from "@/lib/services/auth.service";
+import { useRouter } from "next/navigation";
 export const RegisterForm = ({ onSubmit, loading }: RegisterFormProps) => {
   const [serverError, setServerError] = useState<string | null>(null);
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -27,6 +30,21 @@ export const RegisterForm = ({ onSubmit, loading }: RegisterFormProps) => {
       } else {
         setServerError("Wystąpił nieoczekiwany błąd");
       }
+    }
+  };
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await loginWithGoogle();
+      if (result.success && result.user) {
+        router.push("/dashboard");
+      } else {
+        console.error(
+          "Wystąpił błąd podczas logowania przez Google:",
+          result.error
+        );
+      }
+    } catch (error) {
+      console.error("Błąd podczas logowania przez Google:", error);
     }
   };
 
@@ -90,6 +108,12 @@ export const RegisterForm = ({ onSubmit, loading }: RegisterFormProps) => {
 
       <Button type="submit" className="w-full" loading={loading}>
         Zarejestruj się
+      </Button>
+      <Button type="button" className="w-full" onClick={handleGoogleLogin}>
+        <span className="flex items-center gap-2">
+          <FaGoogle />
+          Zarejestruj się przez Google
+        </span>
       </Button>
     </form>
   );

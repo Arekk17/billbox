@@ -1,30 +1,24 @@
 import React from "react";
-import { FieldErrors, UseFormRegister, Path } from "react-hook-form";
+import {
+  FieldErrors,
+  UseFormRegister,
+  Path,
+  RegisterOptions,
+} from "react-hook-form";
 
 interface InputProps<T extends Record<string, unknown>> {
   name: Path<T>;
-  type?: string;
+  type?: "text" | "number" | "email" | "password" | "date"; // możesz rozszerzyć typy
   placeholder?: string;
   register: UseFormRegister<T>;
   errors?: FieldErrors<T>;
   required?: boolean;
   className?: string;
   label?: string;
-  validation?: {
-    required?: string;
-    pattern?: {
-      value: RegExp;
-      message: string;
-    };
-    minLength?: {
-      value: number;
-      message: string;
-    };
-    maxLength?: {
-      value: number;
-      message: string;
-    };
-  };
+  step?: string;
+  min?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  validation?: RegisterOptions<T, Path<T>>;
 }
 
 export const Input = <T extends Record<string, unknown>>({
@@ -36,14 +30,25 @@ export const Input = <T extends Record<string, unknown>>({
   required = false,
   className = "",
   label,
-  validation,
+  validation = {},
+  step,
+  min,
+  onChange,
 }: InputProps<T>) => {
-  const error = errors?.[name]?.message as string;
+  const error = errors?.[name]?.message as string | undefined;
+
+  const registerOptions = {
+    ...(required ? { required: "To pole jest wymagane" } : {}),
+    ...(type === "number" ? { valueAsNumber: true } : {}),
+    ...validation,
+  } as RegisterOptions<T, Path<T>>;
+
   return (
     <div className="form-control w-full">
       {label && (
         <label className="label">
           <span className="label-text font-medium">{label}</span>
+          {required && <span className="text-error ml-1">*</span>}
         </label>
       )}
       <input
@@ -52,10 +57,10 @@ export const Input = <T extends Record<string, unknown>>({
         className={`input input-bordered w-full ${
           error ? "input-error" : ""
         } ${className}`}
-        {...register(name, {
-          required: required ? "to pole jest wymagane" : false,
-          ...validation,
-        })}
+        step={step}
+        min={min}
+        {...register(name, registerOptions)}
+        onChange={onChange}
       />
       {error && (
         <label className="label">

@@ -2,7 +2,7 @@
 
 import { RegisterForm } from "@/components/organisms/Form/RegisterForm";
 import { RegisterFormData } from "@/lib/validations/auth";
-import { register as registerUser } from "@/services/auth.service";
+import { register as registerUser } from "@/lib/services/auth.service";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 

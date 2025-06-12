@@ -1,109 +1,112 @@
-# BillBox - Aplikacja do zarządzania rachunkami i budżetem
+# BillBox - Bill and Budget Management Application
 
-BillBox to nowoczesna aplikacja webowa do zarządzania rachunkami i budżetem osobistym, zbudowana przy użyciu Next.js 15, Firebase i Tailwind CSS.
+BillBox is a modern web application for managing bills and personal budget, built with Next.js 15, Firebase, and Tailwind CSS.
 
-## 🚀 Technologie
+## 🚀 Technologies
 
-- **Next.js 15** - Framework React z App Router
-- **Firebase** - Backend i autentykacja
-- **Tailwind CSS** - Stylowanie
-- **TypeScript** - Typowanie statyczne
-- **Zustand** - Zarządzanie stanem
+- **Next.js 15.3.0** - React Framework with App Router
+- **React 19.0.0** - UI Library
+- **Firebase 11.6.0** - Backend and Authentication
+- **Tailwind CSS 4** - Styling with daisyUI 5.0.18
+- **TypeScript 5** - Static Typing
+- **@tanstack/react-query 5.72.2** - Server State Management
+- **React Hook Form 7.55.0** - Form Management
+- **Zod 3.24.2** - Schema Validation
 
-## 📁 Struktura projektu
+## 📁 Project Structure
 
 ```
 src/
-├── app/                      # App Router - główny katalog routingu
-│   ├── layout.tsx           # Główny layout aplikacji
-│   ├── page.tsx            # Strona główna
-│   ├── loading.tsx         # Komponent ładowania
-│   ├── error.tsx           # Obsługa błędów
-│   ├── not-found.tsx       # Strona 404
-│   ├── auth/               # Sekcja autentykacji
-│   ├── billing/            # Sekcja rachunków
-│   ├── dashboard/          # Panel główny
-│   └── reports/            # Sekcja raportów
+├── app/                      # App Router - main routing directory
+│   ├── layout.tsx           # Main application layout
+│   ├── page.tsx            # Home page
+│   ├── loading.tsx         # Loading component
+│   ├── error.tsx           # Error handling
+│   ├── not-found.tsx       # 404 page
+│   ├── auth/               # Authentication section
+│   ├── billing/            # Billing section
+│   ├── dashboard/          # Dashboard section
+│   └── reports/            # Reports section
 │
-├── components/             # Komponenty React (Atomic Design)
-│   ├── atoms/             # Podstawowe komponenty (przyciski, inputy)
-│   ├── molecules/         # Złożone komponenty (formularze, karty)
-│   ├── organisms/         # Sekcje komponentów (nagłówki, stopki)
-│   └── templates/         # Szablony stron
+├── components/             # React Components (Atomic Design)
+│   ├── atoms/             # Basic components (buttons, inputs)
+│   ├── molecules/         # Complex components (forms, cards)
+│   ├── organisms/         # Component sections (headers, footers)
+│   └── templates/         # Page templates
 │
-├── lib/                   # Biblioteki i narzędzia
-│   ├── firebase/         # Konfiguracja Firebase
-│   ├── utils/            # Funkcje pomocnicze
-│   ├── constants/        # Stałe
-│   └── types/           # Typy TypeScript
+├── lib/                   # Libraries and tools
+│   ├── firebase/         # Firebase configuration
+│   ├── utils/            # Helper functions
+│   ├── constants/        # Constants
+│   └── types/           # TypeScript types
 │
-├── hooks/                # Własne hooki React
-├── store/               # Zarządzanie stanem (Zustand)
-├── services/           # Serwisy API
-├── config/            # Pliki konfiguracyjne
-└── assets/           # Zasoby statyczne
+├── hooks/                # Custom React hooks
+├── store/               # State management
+├── services/           # API services
+├── config/            # Configuration files
+└── assets/           # Static assets
 ```
 
-## 🏗️ Architektura
+## 🏗️ Architecture
 
 ### App Router (Next.js 15)
 
-- Każda ścieżka w `app/` może zawierać:
-  - `page.tsx` - komponent strony
-  - `layout.tsx` - layout dla danej ścieżki
-  - `loading.tsx` - komponent ładowania
-  - `error.tsx` - obsługa błędów
-  - `not-found.tsx` - strona 404
+- Each path in `app/` can contain:
+  - `page.tsx` - page component
+  - `layout.tsx` - layout for the path
+  - `loading.tsx` - loading component
+  - `error.tsx` - error handling
+  - `not-found.tsx` - 404 page
 
 ### Atomic Design
 
-Projekt wykorzystuje metodologię Atomic Design do organizacji komponentów:
+The project uses Atomic Design methodology for component organization:
 
-- **Atoms** - podstawowe komponenty (przyciski, inputy, ikony)
-- **Molecules** - grupy atomów (formularze, karty, paski wyszukiwania)
-- **Organisms** - większe sekcje (nagłówki, stopki, listy)
-- **Templates** - szablony stron
+- **Atoms** - basic components (buttons, inputs, icons)
+- **Molecules** - groups of atoms (forms, cards, search bars)
+- **Organisms** - larger sections (headers, footers, lists)
+- **Templates** - page templates
 
-## 🚀 Rozpoczęcie pracy
+## 🚀 Getting Started
 
-1. Sklonuj repozytorium:
+1. Clone the repository:
 
 ```bash
-git clone https://github.com/twoj-username/billbox.git
+git clone https://github.com/your-username/billbox.git
 ```
 
-2. Zainstaluj zależności:
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Skonfiguruj zmienne środowiskowe:
+3. Configure environment variables:
 
 ```bash
 cp .env.example .env.local
 ```
 
-4. Uruchom serwer deweloperski:
+4. Start the development server:
 
 ```bash
 npm run dev
 ```
 
-## 🔧 Konfiguracja Firebase
+## 🔧 Firebase Configuration
 
-1. Utwórz projekt w [Firebase Console](https://console.firebase.google.com/)
-2. Włącz potrzebne usługi:
+1. Create a project in [Firebase Console](https://console.firebase.google.com/)
+2. Enable required services:
    - Authentication (Email/Password, Google)
    - Firestore Database
    - Storage
-   - Analytics (opcjonalnie)
-3. Skopiuj konfigurację projektu:
-   - Przejdź do ustawień projektu (⚙️)
-   - Wybierz "Ustawienia projektu"
-   - Przewiń do sekcji "Konfiguracja SDK"
-   - Wybierz "Konfiguracja dla web"
-4. Skopiuj wartości z konfiguracji do pliku `.env.local`:
+   - Analytics (optional)
+3. Copy project configuration:
+   - Go to project settings (⚙️)
+   - Select "Project settings"
+   - Scroll to "SDK configuration"
+   - Choose "Web configuration"
+4. Copy configuration values to `.env.local`:
    ```bash
    NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
@@ -113,7 +116,7 @@ npm run dev
    NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
    NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your-measurement-id
    ```
-5. Skonfiguruj reguły bezpieczeństwa Firestore:
+5. Configure Firestore security rules:
    ```javascript
    rules_version = '2';
    service cloud.firestore {
@@ -124,7 +127,7 @@ npm run dev
      }
    }
    ```
-6. Skonfiguruj reguły Storage:
+6. Configure Storage rules:
    ```javascript
    rules_version = '2';
    service firebase.storage {
@@ -136,22 +139,40 @@ npm run dev
    }
    ```
 
-## 📝 Konwencje kodowania
+## 📝 Coding Conventions
 
-- Używamy TypeScript dla lepszej kontroli typów
-- Komponenty są organizowane według Atomic Design
-- Server Components są domyślnie w `app/`
-- Client Components są w `components/`
-- Stylowanie odbywa się poprzez Tailwind CSS
+- TypeScript for better type control
+- Components organized by Atomic Design
+- Server Components by default in `app/`
+- Client Components in `components/`
+- Styling with Tailwind CSS
+- Form handling with React Hook Form
+- Data validation with Zod
+- State management with React Query
 
-## 🤝 Współpraca
+## 🤝 Contributing
 
-1. Fork projektu
-2. Utwórz branch dla swojej funkcjonalności (`git checkout -b feature/AmazingFeature`)
-3. Commituj zmiany (`git commit -m 'Add some AmazingFeature'`)
-4. Push do brancha (`git push origin feature/AmazingFeature`)
-5. Otwórz Pull Request
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## 📄 Licencja
+## 📄 License
 
-Ten projekt jest licencjonowany pod MIT License - zobacz plik [LICENSE.md](LICENSE.md) dla szczegółów.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+## 🔧 Development Scripts
+
+```bash
+npm run dev     # Start development server with Turbopack
+npm run build   # Build for production
+npm run start   # Start production server
+npm run lint    # Run ESLint
+```
+
+## 📱 Mobile App
+
+[APK link will be added after mobile app development]
+
+## 📸 Screenshots

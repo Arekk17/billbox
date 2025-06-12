@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LoginForm } from "@/components/organisms/Form/LoginForm";
-import { login } from "@/services/auth.service";
+import { login } from "@/lib/services/auth.service";
 import type { LoginFormData } from "@/lib/validations/auth";
 
 export default function LoginPage() {

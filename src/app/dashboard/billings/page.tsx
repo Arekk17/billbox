@@ -5,13 +5,15 @@ import { FaPlus } from "react-icons/fa";
 import { ReceiptsList } from "@/components/organisms/Widgets/ReceiptsList";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+type Params = Promise<{ page?: string }>;
 
-export default async function ReceiptsPage({
-  searchParams,
-}: {
-  searchParams: { page?: string };
-}) {
-  const currentPage = Number(searchParams.page) || 1;
+interface PageProps {
+  searchParams: Params;
+}
+
+export default async function ReceiptsPage({ searchParams }: PageProps) {
+  const { page } = await searchParams;
+  const currentPage = Number(page) || 1;
   const pageSize = 10;
   const user = await getUserFromCookie();
 

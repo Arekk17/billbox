@@ -11,10 +11,10 @@ import { DateDisplay } from "@/components/molecules/DateDisplay/DateDisplay";
 import { getUserFromCookie } from "@/lib/auth/getUserFromCookie";
 import { redirect } from "next/navigation";
 
+type Params = Promise<{ id: string }>;
+
 interface PageProps {
-  params: {
-    id: string;
-  };
+  params: Params;
 }
 
 async function getCategoryUtils(categories: Category[]) {
@@ -36,16 +36,15 @@ async function getCategoryUtils(categories: Category[]) {
 
 export default async function ReceiptDetailsPage({ params }: PageProps) {
   const user = await getUserFromCookie();
-
   if (!user) {
     redirect("/auth/signin");
   }
 
-  const receiptId = params.id;
+  const { id } = await params;
   const userId = user.uid;
 
   const [receiptResult, categoriesResult] = await Promise.all([
-    getReceiptById(receiptId),
+    getReceiptById(id),
     getCategoriesByUserId(userId),
   ]);
 

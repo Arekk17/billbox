@@ -6,6 +6,7 @@ import { Button } from "@/components/atoms/Buttons/Button";
 import { useLogout } from "@/hooks/useLogout";
 import { NAV_ITEMS } from "@/constants/navItems";
 import Link from "next/link";
+import Image from "next/image";
 
 const Header = () => {
   const { handleLogout } = useLogout();
@@ -46,9 +47,11 @@ const Header = () => {
                 className="btn btn-ghost btn-circle avatar"
               >
                 <div className="w-10 rounded-full">
-                  <img
-                    alt="Tailwind CSS Navbar component"
+                  <Image
                     src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                    alt="Tailwind CSS Navbar component"
+                    width={40}
+                    height={40}
                   />
                 </div>
               </div>

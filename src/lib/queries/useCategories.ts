@@ -13,7 +13,7 @@ export const useCategories = (userId: string | undefined) => {
       if (!response.success || !response.data) {
         return [];
       }
-      return response.data;
+      return Array.isArray(response.data) ? response.data : [response.data];
     },
     enabled: !!userId,
   });

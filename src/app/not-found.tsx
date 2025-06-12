@@ -9,7 +9,7 @@ export default function NotFound() {
           <p className="text-xl text-base-content/80 mb-8">
             Przepraszamy, ale strona której szukasz nie istnieje.
           </p>
-          <Link href="/" className="btn btn-primary">
+          <Link href="/dashboard" className="btn btn-primary">
             Wróć do strony głównej
           </Link>
         </div>

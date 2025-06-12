@@ -6,17 +6,44 @@ import {
   addDoc,
   doc,
   getDoc,
+  orderBy,
+  startAfter,
+  limit,
+  DocumentSnapshot,
 } from "firebase/firestore";
 import { db, storage } from "@/lib/firebase/firebase";
 import { ReceiptFormData } from "../validations/recipt";
 import { getDownloadURL } from "firebase/storage";
 import { uploadBytes } from "firebase/storage";
 import { ref } from "firebase/storage";
-export const getReceipts = async (userId: string) => {
+export const getReceipts = async (
+  userId: string,
+  pageSize: number = 10,
+  lastDoc?: DocumentSnapshot
+) => {
   try {
     const receiptsRef = collection(db, "receipts");
-    const q = query(receiptsRef, where("userId", "==", userId));
+    let q;
+
+    if (lastDoc) {
+      q = query(
+        receiptsRef,
+        where("userId", "==", userId),
+        orderBy("date", "desc"),
+        startAfter(lastDoc),
+        limit(pageSize)
+      );
+    } else {
+      q = query(
+        receiptsRef,
+        where("userId", "==", userId),
+        orderBy("date", "desc"),
+        limit(pageSize)
+      );
+    }
+
     const querySnapshot = await getDocs(q);
+    const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
 
     const receipts = querySnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -26,6 +53,8 @@ export const getReceipts = async (userId: string) => {
     return {
       success: true,
       data: receipts,
+      lastDoc: lastVisible,
+      hasMore: querySnapshot.docs.length === pageSize,
     };
   } catch (error) {
     console.error("Error getting receipts:", error);

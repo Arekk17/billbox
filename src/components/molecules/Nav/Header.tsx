@@ -24,7 +24,9 @@ const Header = () => {
             </label>
           </div>
           <div className="flex-1">
-            <a className="btn btn-ghost text-xl">BillBox</a>
+            <Link href="/dashboard" className="btn btn-ghost text-xl">
+              BillBox
+            </Link>
           </div>
           <div className="flex gap-2">
             <ul className="menu menu-horizontal bg-base-100 rounded-box hidden lg:flex">

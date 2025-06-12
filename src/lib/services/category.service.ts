@@ -1,5 +1,13 @@
 import { Category } from "@/lib/validations/category";
-import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
 
 export interface CategoryResponse {
@@ -59,6 +67,30 @@ export const addCategory = async (
     };
   } catch (error) {
     console.error("Error adding category:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Wystąpił błąd",
+    };
+  }
+};
+
+export const updateCategory = async (
+  categoryId: string,
+  data: Partial<Omit<Category, "id">>
+): Promise<CategoryResponse> => {
+  try {
+    const categoryRef = doc(db, "categories", categoryId);
+    await updateDoc(categoryRef, data);
+
+    return {
+      success: true,
+      data: {
+        id: categoryId,
+        ...data,
+      } as Category,
+    };
+  } catch (error) {
+    console.error("Error updating category:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Wystąpił błąd",

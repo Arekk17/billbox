@@ -6,15 +6,31 @@ import { ReceiptFormProps } from "@/lib/types/recips";
 import { toast } from "react-toastify";
 import { addReceipt } from "@/lib/services/recipts.service";
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { updateReceiptsCache } from "@/lib/hooks/useReceipts";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { ReceiptFormFields } from "@/components/molecules/Form/ReceiptFormFields";
 import { CategoryModal } from "@/components/organisms/Modal/CategoryModal";
+import { getCategoriesByUserId } from "@/lib/services/category.service";
+import { Category } from "@/lib/validations/category";
 
-const ReceiptForm = ({ categories, userId, onSuccess }: ReceiptFormProps) => {
+const ReceiptForm = ({
+  userId,
+  onSuccess,
+}: Omit<ReceiptFormProps, "categories">) => {
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
+
+  const { data: categories = [] } = useQuery<Category[]>({
+    queryKey: ["categories", userId],
+    queryFn: async () => {
+      const result = await getCategoriesByUserId(userId);
+      return result.success && result.data
+        ? Array.isArray(result.data)
+          ? result.data
+          : [result.data]
+        : [];
+    },
+  });
 
   const {
     register,
@@ -36,7 +52,8 @@ const ReceiptForm = ({ categories, userId, onSuccess }: ReceiptFormProps) => {
       if (result.success) {
         reset();
         toast.success("Paragon dodany pomyślnie");
-        updateReceiptsCache(queryClient, userId, data);
+        // Invalidate receipts query to trigger refetch
+        await queryClient.invalidateQueries({ queryKey: ["receipts", userId] });
         onSuccess?.();
       } else {
         toast.error(result.error || "Wystąpił błąd podczas dodawania paragonu");
@@ -68,7 +85,10 @@ const ReceiptForm = ({ categories, userId, onSuccess }: ReceiptFormProps) => {
         isOpen={isAddingCategory}
         onClose={() => setIsAddingCategory(false)}
         userId={userId}
-        mode={"add"}
+        mode="add"
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ["categories", userId] });
+        }}
       />
     </>
   );

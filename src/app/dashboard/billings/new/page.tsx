@@ -1,25 +1,23 @@
+"use client";
 import ReceiptForm from "@/components/organisms/Form/ReciptForm";
-import { getUserFromCookie } from "@/lib/auth/getUserFromCookie";
-import { getCategoriesByUserId } from "@/lib/services/category.service";
+import { useUserId } from "@/lib/queries/useUser";
 import { redirect } from "next/navigation";
-import React from "react";
 
-export default async function page() {
-  const user = await getUserFromCookie();
-  const userId = user?.uid;
+export default function NewBillingPage() {
+  const { data: user, isLoading } = useUserId();
+  const userId = user?.id;
+
+  if (isLoading) {
+    return <div>Ładowanie...</div>;
+  }
+
   if (!user || !userId) {
     redirect("/auth/signin");
   }
-  const categoriesResult = await getCategoriesByUserId(userId);
-  const categories =
-    categoriesResult.success && categoriesResult.data
-      ? Array.isArray(categoriesResult.data)
-        ? categoriesResult.data
-        : [categoriesResult.data]
-      : [];
+
   return (
     <div className="container mx-auto p-6">
-      <ReceiptForm loading={false} categories={categories} userId={userId} />
+      <ReceiptForm userId={userId} />
     </div>
   );
 }

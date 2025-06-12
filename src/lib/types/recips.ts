@@ -24,4 +24,5 @@ export interface ReceiptFormProps {
   defaultValues?: Partial<ReceiptFormData>;
   categories: Category[];
   userId: string;
+  onSuccess?: () => void;
 }

@@ -10,16 +10,16 @@ export const NAV_ITEMS: NavItem[] = [
   {
     name: "Paragony",
     icon: FaReceipt,
-    href: "/paragony",
+    href: "/dashboard/billings",
   },
   {
     name: "Kategorie",
     icon: FaList,
-    href: "/kategorie",
+    href: "/dashboard/categories",
   },
   {
     name: "Raporty",
     icon: FaChartBar,
-    href: "/raporty",
+    href: "/dashboard/reports",
   },
 ];

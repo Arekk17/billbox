@@ -21,9 +21,11 @@ export const receiptSchema = z.object({
     .min(0.01, "Kwota musi być większa niż 0")
     .max(999999.99, "Kwota jest za duża"),
 
-  categoryId: z.string({
-    required_error: "Kategoria jest wymagana",
-  }),
+  categoryId: z
+    .string({
+      required_error: "Kategoria jest wymagana",
+    })
+    .min(1, "Kategoria jest wymagana"),
 
   image: z
     .custom<FileList | string | null>()

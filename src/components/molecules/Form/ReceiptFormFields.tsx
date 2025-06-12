@@ -13,6 +13,7 @@ interface ReceiptFormFieldsProps {
   errors: FieldErrors<ReceiptFormData>;
   categories: Array<{ id?: string; name: string }>;
   onAddCategory: () => void;
+  loading?: boolean;
 }
 
 export const ReceiptFormFields = ({
@@ -20,6 +21,7 @@ export const ReceiptFormFields = ({
   errors,
   categories,
   onAddCategory,
+  loading = false,
 }: ReceiptFormFieldsProps) => {
   return (
     <>
@@ -101,8 +103,8 @@ export const ReceiptFormFields = ({
       />
 
       <div>
-        <Button type="submit" className="w-full">
-          Dodaj paragon
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Dodawanie..." : "Dodaj paragon"}
         </Button>
       </div>
     </>

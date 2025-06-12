@@ -13,6 +13,7 @@ import { CategoryModal } from "@/components/organisms/Modal/CategoryModal";
 
 const ReceiptForm = ({ categories, userId, onSuccess }: ReceiptFormProps) => {
   const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
 
   const {
@@ -29,6 +30,7 @@ const ReceiptForm = ({ categories, userId, onSuccess }: ReceiptFormProps) => {
   });
 
   const handleReceiptSubmit = async (data: ReceiptFormData) => {
+    setIsLoading(true);
     try {
       const result = await addReceipt(data, userId);
       if (result.success) {
@@ -42,6 +44,8 @@ const ReceiptForm = ({ categories, userId, onSuccess }: ReceiptFormProps) => {
     } catch (error) {
       console.error("Error creating receipt: ", error);
       toast.error("Wystąpił błąd podczas dodawania paragonu");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -56,6 +60,7 @@ const ReceiptForm = ({ categories, userId, onSuccess }: ReceiptFormProps) => {
           errors={errors}
           categories={categories}
           onAddCategory={() => setIsAddingCategory(true)}
+          loading={isLoading}
         />
       </form>
 
@@ -63,6 +68,7 @@ const ReceiptForm = ({ categories, userId, onSuccess }: ReceiptFormProps) => {
         isOpen={isAddingCategory}
         onClose={() => setIsAddingCategory(false)}
         userId={userId}
+        mode={"add"}
       />
     </>
   );

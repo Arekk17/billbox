@@ -16,35 +16,40 @@ BillBox is a modern web application for managing bills and personal budget, buil
 ## 📁 Project Structure
 
 ```
-src/
-├── app/                      # App Router - main routing directory
-│   ├── layout.tsx           # Main application layout
-│   ├── page.tsx            # Home page
-│   ├── loading.tsx         # Loading component
-│   ├── error.tsx           # Error handling
-│   ├── not-found.tsx       # 404 page
-│   ├── auth/               # Authentication section
-│   ├── billing/            # Billing section
-│   ├── dashboard/          # Dashboard section
-│   └── reports/            # Reports section
+billbox/                    # Root directory
+├── src/                    # Source code
+│   ├── app/               # Next.js App Router
+│   │   ├── api/          # API Routes
+│   │   ├── auth/         # Authentication pages
+│   │   ├── dashboard/    # Dashboard section
+│   │   ├── layout.tsx    # Root layout
+│   │   ├── page.tsx      # Home page
+│   │   ├── loading.tsx   # Loading component
+│   │   ├── error.tsx     # Error handling
+│   │   ├── not-found.tsx # 404 page
+│   │   ├── globals.css   # Global styles
+│   │   └── favicon.ico   # Favicon
+│   │
+│   ├── components/        # React Components
+│   ├── lib/              # Core utilities
+│   ├── constants/        # Application constants
+│   ├── hooks/            # Custom React hooks
+│   ├── assets/           # Static assets
+│   └── middleware.ts     # Next.js middleware
 │
-├── components/             # React Components (Atomic Design)
-│   ├── atoms/             # Basic components (buttons, inputs)
-│   ├── molecules/         # Complex components (forms, cards)
-│   ├── organisms/         # Component sections (headers, footers)
-│   └── templates/         # Page templates
+├── public/               # Public assets
+├── .next/               # Next.js build output
+├── node_modules/        # Dependencies
 │
-├── lib/                   # Libraries and tools
-│   ├── firebase/         # Firebase configuration
-│   ├── utils/            # Helper functions
-│   ├── constants/        # Constants
-│   └── types/           # TypeScript types
-│
-├── hooks/                # Custom React hooks
-├── store/               # State management
-├── services/           # API services
-├── config/            # Configuration files
-└── assets/           # Static assets
+├── .env.example         # Example environment variables
+├── .env.local           # Local environment variables
+├── .gitignore          # Git ignore rules
+├── next.config.ts      # Next.js configuration
+├── package.json        # Project dependencies
+├── postcss.config.mjs  # PostCSS configuration
+├── tailwind.config.js  # Tailwind CSS configuration
+├── tsconfig.json       # TypeScript configuration
+└── README.md           # Project documentation
 ```
 
 ## 🏗️ Architecture
@@ -116,28 +121,108 @@ npm run dev
    NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
    NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your-measurement-id
    ```
-5. Configure Firestore security rules:
-   ```javascript
-   rules_version = '2';
-   service cloud.firestore {
-     match /databases/{database}/documents {
-       match /{document=**} {
-         allow read, write: if request.auth != null;
-       }
-     }
-   }
-   ```
-6. Configure Storage rules:
-   ```javascript
-   rules_version = '2';
-   service firebase.storage {
-     match /b/{bucket}/o {
-       match /{allPaths=**} {
-         allow read, write: if request.auth != null;
-       }
-     }
-   }
-   ```
+
+## 🔐 Authentication & Security
+
+### Cookie Management
+
+- Secure HTTP-only cookies for session management
+- CSRF protection
+- SameSite cookie policy
+- Secure cookie flags
+
+### Authentication Flow
+
+1. User signs in with email/password or Google
+2. Firebase generates JWT token
+3. Token stored in secure HTTP-only cookie
+4. Middleware validates token on protected routes
+
+## 📡 API Services
+
+### API Routes Structure
+
+```
+src/app/api/
+├── auth/                    # Authentication endpoints
+│   ├── createCookie/       # Create session cookie
+│   ├── revokeCookies/      # Clear session cookies
+│   └── verify/            # Verify session token
+└── me/                     # User profile endpoints
+```
+
+### Cookie Management API
+
+```typescript
+// src/app/api/auth/createCookie/route.ts
+POST /api/auth/createCookie
+- Creates secure HTTP-only cookie
+- Sets session token
+- Configures cookie options (SameSite, Secure, etc.)
+
+// src/app/api/auth/revokeCookies/route.ts
+POST /api/auth/revokeCookies
+- Clears all session cookies
+- Handles logout process
+
+// src/app/api/auth/verify/route.ts
+GET /api/auth/verify
+- Verifies session token
+- Returns user session status
+```
+
+### Cookie Configuration
+
+```typescript
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax' as const,
+  path: '/',
+  maxAge: 60 * 60 * 24 * 7, // 7 days
+  domain: process.env.COOKIE_DOMAIN
+}
+```
+
+### Authentication Service
+
+```typescript
+// src/lib/services/auth.service.ts
+- signIn(email: string, password: string)
+- signUp(email: string, password: string)
+- signOut()
+- resetPassword(email: string)
+- updateProfile(data: UserProfile)
+```
+
+### User Service
+
+```typescript
+// src/lib/services/user.service.ts
+- getUserProfile(userId: string)
+- updateUserSettings(userId: string, settings: UserSettings)
+- deleteUserAccount(userId: string)
+```
+
+### Category Service
+
+```typescript
+// src/lib/services/category.service.ts
+- getCategories(userId: string)
+- createCategory(data: CategoryData)
+- updateCategory(categoryId: string, data: CategoryData)
+- deleteCategory(categoryId: string)
+```
+
+### Receipt Service
+
+```typescript
+// src/lib/services/recipts.service.ts
+- getReceipts(userId: string)
+- createReceipt(data: ReceiptData)
+- updateReceipt(receiptId: string, data: ReceiptData)
+- deleteReceipt(receiptId: string)
+```
 
 ## 📝 Coding Conventions
 
@@ -149,6 +234,9 @@ npm run dev
 - Form handling with React Hook Form
 - Data validation with Zod
 - State management with React Query
+- API calls through service layer
+- Secure cookie handling
+- Error boundary implementation
 
 ## 🤝 Contributing
 
@@ -176,3 +264,19 @@ npm run lint    # Run ESLint
 [APK link will be added after mobile app development]
 
 ## 📸 Screenshots
+
+## 🔍 Features
+
+- User authentication (Email/Password, Google)
+- Bill management and tracking
+- Budget planning and monitoring
+- Expense categorization
+- Financial reports and analytics
+- Real-time data updates
+- Responsive design
+- Offline support (coming soon)
+- PWA support (coming soon)
+- Secure cookie-based session management
+- Protected API routes
+- Data validation with Zod
+- Error handling and logging

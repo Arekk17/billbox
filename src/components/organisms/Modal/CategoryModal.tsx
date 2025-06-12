@@ -1,52 +1,76 @@
 import { useState } from "react";
 import { Modal } from "@/components/molecules/Modal/Modal";
-import { HexColorPicker } from "react-colorful";
 import { toast } from "react-toastify";
-import { addCategory } from "@/lib/services/category.service";
+import { addCategory, updateCategory } from "@/lib/services/category.service";
+import { CategoryForm } from "@/components/organisms/Form/CategoryForm";
+import { Category } from "@/lib/validations/category";
 
 interface CategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   userId: string;
+  mode: "add" | "edit";
+  category?: Category;
+  onSuccess?: () => void;
 }
 
 export const CategoryModal = ({
   isOpen,
   onClose,
   userId,
+  mode,
+  category,
+  onSuccess,
 }: CategoryModalProps) => {
-  const [newCategoryName, setNewCategoryName] = useState("");
-  const [newCategoryColor, setNewCategoryColor] = useState("#000000");
   const [isSubmittingCategory, setIsSubmittingCategory] = useState(false);
 
-  const handleAddCategory = async () => {
-    if (!newCategoryName.trim()) {
-      toast.error("Nazwa kategorii jest wymagana");
-      return;
-    }
-
+  const handleSubmit = async (data: { name: string; color: string }) => {
     setIsSubmittingCategory(true);
     try {
-      const result = await addCategory({
-        name: newCategoryName.trim(),
-        userId,
-        color: newCategoryColor,
-      });
+      let result;
+
+      if (mode === "add") {
+        result = await addCategory({
+          name: data.name,
+          userId,
+          color: data.color,
+        });
+      } else {
+        if (!category?.id) {
+          throw new Error("Brak ID kategorii do edycji");
+        }
+        result = await updateCategory(category.id, {
+          name: data.name,
+          color: data.color,
+        });
+      }
 
       if (result.success && result.data) {
-        toast.success("Kategoria dodana pomyślnie");
-        setNewCategoryName("");
-        setNewCategoryColor("#000000");
+        toast.success(
+          mode === "add"
+            ? "Kategoria dodana pomyślnie"
+            : "Kategoria zaktualizowana pomyślnie"
+        );
         onClose();
-        window.location.reload();
+        onSuccess?.();
       } else {
         toast.error(
-          result.error || "Wystąpił błąd podczas dodawania kategorii"
+          result.error ||
+            `Wystąpił błąd podczas ${
+              mode === "add" ? "dodawania" : "aktualizacji"
+            } kategorii`
         );
       }
     } catch (error) {
-      console.error("Error adding category:", error);
-      toast.error("Wystąpił błąd podczas dodawania kategorii");
+      console.error(
+        `Error ${mode === "add" ? "adding" : "updating"} category:`,
+        error
+      );
+      toast.error(
+        `Wystąpił błąd podczas ${
+          mode === "add" ? "dodawania" : "aktualizacji"
+        } kategorii`
+      );
     } finally {
       setIsSubmittingCategory(false);
     }
@@ -56,50 +80,19 @@ export const CategoryModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Dodaj nową kategorię"
+      title={mode === "add" ? "Dodaj nową kategorię" : "Edytuj kategorię"}
       primaryButton={{
-        text: "Dodaj",
-        onClick: handleAddCategory,
-        loading: isSubmittingCategory,
-      }}
-      secondaryButton={{
         text: "Anuluj",
         onClick: onClose,
       }}
     >
-      <div className="space-y-4">
-        <input
-          type="text"
-          value={newCategoryName}
-          onChange={(e) => setNewCategoryName(e.target.value)}
-          placeholder="Nazwa kategorii"
-          className="input input-bordered w-full"
-        />
-        <div className="space-y-2">
-          <label className="label">
-            <span className="label-text font-medium">Kolor kategorii</span>
-          </label>
-          <div className="flex items-center gap-4">
-            <div
-              className="w-10 h-10 rounded-lg border border-gray-200"
-              style={{ backgroundColor: newCategoryColor }}
-            />
-            <input
-              type="text"
-              value={newCategoryColor}
-              onChange={(e) => setNewCategoryColor(e.target.value)}
-              className="input input-bordered flex-1"
-              placeholder="#000000"
-            />
-          </div>
-          <div className="mt-2">
-            <HexColorPicker
-              color={newCategoryColor}
-              onChange={setNewCategoryColor}
-            />
-          </div>
-        </div>
-      </div>
+      <CategoryForm
+        onSubmit={handleSubmit}
+        submitButtonText={mode === "add" ? "Dodaj kategorię" : "Zapisz zmiany"}
+        isSubmitting={isSubmittingCategory}
+        initialName={category?.name}
+        initialColor={category?.color || "#000000"}
+      />
     </Modal>
   );
 };
